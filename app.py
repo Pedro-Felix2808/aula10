@@ -97,11 +97,73 @@ def buscar_contato(nome):
             )
 
 def atualizar_contato():
-    print("funcao para atualizar contato")
+   conexao, cursor = conectar_banco()
+   
+   id_contato = input("Digite o ID do contato a ser atualizado: ")
+
+   sql = "SELECT * FROM contatos WHERE id = ?"
+
+   cursor.execute(sql, (id_contato,))
+   
+   contato = cursor.fetchone()
+
+   if contato == None:
+       print("Contato não encontrado.")
+       conexao.close()
+       return
+
+   print("Contato encontrado:")
+   print(f"Nome: {contato[1]}")
+   print(f"Telefone: {contato[2]}")
+   print(f"Email: {contato[3]}")     
+
+   novo_nome = input("Digite o novo nome: ")
+   novo_telefone = input("Digite o novo telefone: ")
+   novo_email = input("Digite o novo email: ")
+
+   sql = "UPDATE contatos SET nome = ?, telefone = ?, email = ? WHERE id = ?"
+
+   cursor.execute(sql, (novo_nome, novo_telefone, novo_email, id_contato))
+
+   conexao.commit()
+
+   conexao.close()
+
+   print("Contato atualizado com sucesso!")
 
 
 def excluir_contato():
-    print("funcao para excluir contato")
+    conexao, cursor = conectar_banco()
+
+    id_contato = input("Digite o ID do contato a ser excluído: ")
+
+    sql = "SELECT * FROM contatos WHERE id = ?"
+
+    cursor.execute(sql, (id_contato,))
+
+    contato = cursor.fetchone()
+
+    if contato == None:
+        print("Contato não encontrado.")
+        conexao.close()
+        return
+
+    print("Contato encontrado:")
+    print(f"Nome: {contato[1]}")
+    print(f"Telefone: {contato[2]}")
+    print(f"Email: {contato[3]}")
+
+    confirmacao = input("Tem certeza que deseja excluir este contato? (s/n): ")
+
+    if confirmacao.lower() == "s":
+        sql = "DELETE FROM contatos WHERE id = ?"
+        cursor.execute(sql, (id_contato,))
+        conexao.commit()
+        print("Contato excluído com sucesso!")
+    else:
+        print("Exclusão cancelada.")
+
+    conexao.close()
 
 
 def menu():
